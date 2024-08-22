@@ -29,7 +29,9 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
     volumes:
-      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"  
     networks:
       - app-network
 
@@ -45,6 +47,12 @@ services:
     networks:
       - app-network
 
+
+volumes:
+  mysql-data: 
+    driver: local
+
 networks:
   app-network:
     driver: bridge
+  
