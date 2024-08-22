@@ -1,0 +1,1 @@
+# Fullstack-Laravel-Inertia-docker-template
