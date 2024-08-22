@@ -1,0 +1,50 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: appuser
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: my-app-image
+    ports:
+          - '443:443'
+          - '8080:8080'
+          - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+    container_name: my-app-container
+    restart: unless-stopped
+    working_dir: /var/www/
+    entrypoint: ["sh", "-c", "chown -R appuser:www-data /var/www && chmod -R 775 /var/www/storage /var/www/bootstrap/cache && php-fpm"]
+    volumes:
+      - ./:/var/www
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: my-db-container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    volumes:
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: my-nginx-container
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
