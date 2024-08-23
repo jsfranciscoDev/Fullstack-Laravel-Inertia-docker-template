@@ -12,10 +12,13 @@ RUN apt update && apt install -y \
     libonig-dev \
     libxml2-dev \
     build-essential \
+    zip \
+    unzip \
+    libzip-dev \
     && apt clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
